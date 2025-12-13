@@ -1270,11 +1270,33 @@
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const img = document.getElementById(`img-${type}`);
-                    const ph = document.getElementById(`ph-${type}`);
-                    img.src = e.target.result;
-                    img.style.display = 'block';
-                    ph.style.display = 'none';
+                    const image = new Image();
+                    image.onload = function() {
+                        // 创建 canvas 来裁切图片为正方形
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        // 确定裁切尺寸（取较小边作为正方形边长）
+                        const size = Math.min(image.width, image.height);
+                        canvas.width = size;
+                        canvas.height = size;
+                        
+                        // 计算裁切位置（从中心裁切）
+                        const startX = (image.width - size) / 2;
+                        const startY = (image.height - size) / 2;
+                        
+                        // 绘制裁切后的图片
+                        ctx.drawImage(image, startX, startY, size, size, 0, 0, size, size);
+                        
+                        // 将裁切后的图片设置为头像
+                        const croppedImage = canvas.toDataURL('image/png');
+                        const img = document.getElementById(`img-${type}`);
+                        const ph = document.getElementById(`ph-${type}`);
+                        img.src = croppedImage;
+                        img.style.display = 'block';
+                        ph.style.display = 'none';
+                    };
+                    image.src = e.target.result;
                 };
                 reader.readAsDataURL(input.files[0]);
             }
