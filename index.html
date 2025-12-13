@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我们的故事</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        @import url("https://fontsapi.zeoseven.com/79/main/result.css");
+
+        :root {
+            --bg-light: #f8f8f8;
+            --bg-dark: #2a2a2a;
+            --text-light: #666;
+            --text-dark: #1a1a1a;
+            --accent-gray: #8a8a8a;
+            --border-color: #ddd;
+        }
+
+        /* 主题：梦中身 - 梦幻紫灰 */
+        body.theme-梦中身 {
+            --bg-light: #f0f0f5;
+            --bg-dark: #4a4a5a;
+            --text-light: #7a7a8a;
+            --text-dark: #3a3a4a;
+            --accent-gray: #8a8aaa;
+            --border-color: #d0d0e0;
+        }
+
+        /* 主题：如是说 - 淡雅蓝灰信纸 */
+        body.theme-如是说 {
+            --bg-light: #f0f4f7;
+            --bg-dark: #5a6a7a;
+            --text-light: #7a8a9a;
+            --text-dark: #3a4a5a;
+            --accent-gray: #6a8aaa;
+            --border-color: #dae4ea;
+        }
+
+        /* 主题：朱砂痣 - 浓烈红褐 */
+        body.theme-朱砂痣 {
+            --bg-light: #fdf5f3;
+            --bg-dark: #6a2a25;
+            --text-light: #9a5a55;
+            --text-dark: #5a1a15;
+            --accent-gray: #c85a50;
+            --border-color: #f0d8d3;
+        }
+
+        /* 主题：长夏中 - 清新绿黄 */
+        body.theme-长夏中 {
+            --bg-light: #f5f8f0;
+            --bg-dark: #3a4a35;
+            --text-light: #6a8a65;
+            --text-dark: #2a3a25;
+            --accent-gray: #7a9a75;
+            --border-color: #d8e8d0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Clear Han Serif";
+            font-weight: normal;
+            background: #e5e5e5;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        body.generating-image .controls,
+        body.generating-image .menu-toggle,
+        body.generating-image .speech-icon,
+        body.generating-image .copyright-watermark {
+            display: none !important;
+        }
+
+        body.generating-image #paper-container::before {
+            display: none !important;
+        }
+
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 101;
+            transition: all 0.3s;
+            font-size: 20px;
+            border: 2px solid #fff;
+        }
+
+        .menu-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .menu-toggle.active {
+            transform: rotate(45deg);
+            background: #333;
+            color: white;
+        }
+
+        .controls {
+            position: fixed;
+            top: 75px;
+            right: 20px;
+            background: rgba(253, 253, 253, 0.96);
+            padding: 24px;
+            border-radius: 4px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            border: 1px solid #eaeae5;
+            z-index: 100;
+            max-width: 260px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(20px);
+            transition: all 0.4s cubic-bezier(0.2, 0, 0, 1);
+        }
+
+        .controls.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+
+        .btn-primary {
+            background: #2c2c2c;
+            color: #f0f0f0;
+            border: 1px solid #2c2c2c;
+            font-size: 14px;
+            padding: 12px 20px;
+            width: 100%;
+            cursor: pointer;
+            border-radius: 2px;
+            font-family: inherit;
+        }
+
+        .btn-primary:hover {
+            background: #444;
+        }
+
+        .btn-primary:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+        .theme-section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 12px;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .theme-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn-theme {
+            padding: 8px 12px;
+            border: 1px solid #dcdcdc;
+            background: #fff;
+            cursor: pointer;
+            border-radius: 2px;
+            font-family: inherit;
+            font-size: 13px;
+            color: #666;
+            transition: all 0.2s;
+            letter-spacing: 1px;
+        }
+
+        .btn-theme:hover {
+            border-color: #555;
+            color: #333;
+        }
+
+        .btn-theme.active {
+            background: #2c2c2c;
+            color: #fff;
+            border-color: #2c2c2c;
+        }
+
+        #paper-container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            padding: 50px 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .main-title {
+            text-align: center;
+            font-size: 32px;
+            font-weight: normal;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 60px;
+            letter-spacing: 2px;
+        }
+
+        .abstract-block {
+            position: relative;
+            margin: 50px 0;
+            padding: 30px;
+            background: var(--bg-light);
+            border-left: 3px solid var(--text-dark);
+        }
+
+        .abstract-block.dark {
+            background: var(--bg-dark);
+            color: white;
+            border-left-color: white;
+        }
+
+        .part-label {
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: var(--accent-gray);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .abstract-block.dark .part-label {
+            color: #aaa;
+        }
+
+        .character-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .character-card {
+            text-align: center;
+        }
+
+        .avatar-container {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+            background: #e0e0e0;
+            border: 2px solid #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .abstract-block.dark .avatar-container {
+            background: #444;
+            border-color: #666;
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .avatar-placeholder {
+            font-size: 12px;
+            color: #999;
+            text-align: center;
+        }
+
+        .char-name {
+            font-size: 20px;
+            font-weight: normal;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        .abstract-block.dark .char-name {
+            color: white;
+        }
+
+        .input-line {
+            border: none;
+            background: transparent;
+            border-bottom: 1px solid #ccc;
+            color: inherit;
+            font-family: inherit;
+            font-size: 16px;
+            padding: 8px 4px;
+            width: 100%;
+            outline: none;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .input-line:focus {
+            border-bottom-color: var(--text-dark);
+        }
+
+        .abstract-block.dark .input-line {
+            border-bottom-color: #666;
+            color: white;
+        }
+
+        .abstract-block.dark .input-line:focus {
+            border-bottom-color: #aaa;
+        }
+
+        .textarea-box {
+            width: 100%;
+            border: 1px solid #ddd;
+            background: white;
+            padding: 15px;
+            min-height: 80px;
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--text-dark);
+            resize: none;
+            outline: none;
+            line-height: 1.8;
+            transition: all 0.3s;
+        }
+
+        .textarea-box:focus {
+            border-color: var(--text-dark);
+        }
+
+        .abstract-block.dark .textarea-box {
+            background: #3a3a3a;
+            border-color: #555;
+            color: white;
+        }
+
+        .abstract-block.dark .textarea-box:focus {
+            border-color: #888;
+        }
+
+        .info-row {
+            margin: 15px 0;
+            font-size: 15px;
+            color: var(--text-light);
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .abstract-block.dark .info-row {
+            color: #ccc;
+        }
+
+        .info-label {
+            min-width: fit-content;
+        }
+
+        .music-player {
+            background: #fafafa;
+            border: 1px solid #ddd;
+            padding: 0;
+            margin: 20px 0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .music-header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background: white;
+            border-bottom: 1px solid #eee;
+        }
+
+        .music-icon {
+            width: 32px;
+            height: 32px;
+            color: #666;
+            flex-shrink: 0;
+        }
+
+        .music-info {
+            margin-left: 15px;
+            flex: 1;
+        }
+
+        .music-title {
+            font-size: 16px;
+            margin-bottom: 5px;
+            border: none;
+            background: transparent;
+            border-bottom: 1px dashed #ddd;
+            padding: 4px 0;
+            width: 100%;
+            outline: none;
+            color: var(--text-dark);
+        }
+
+        .music-title:focus {
+            border-bottom-color: #999;
+        }
+
+        .music-artist {
+            font-size: 12px;
+            color: #999;
+            border: none;
+            background: transparent;
+            border-bottom: 1px dashed #e5e5e5;
+            padding: 4px 0;
+            width: 100%;
+            outline: none;
+            margin-top: 5px;
+        }
+
+        .music-artist:focus {
+            border-bottom-color: #ccc;
+        }
+
+        .progress-container {
+            position: relative;
+            margin: 0 20px;
+            height: 4px;
+            background-color: #e5e5e5;
+            border-radius: 2px;
+        }
+
+        .progress-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 60%;
+            background-color: #666;
+            border-radius: 2px;
+        }
+
+        .progress-time {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 20px 15px;
+            font-size: 11px;
+            color: #999;
+            font-family: 'Courier New', monospace;
+        }
+
+        .music-lyrics {
+            background: #f5f5f5;
+            padding: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .music-lyrics textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            font-size: 13px;
+            line-height: 1.9;
+            color: #555;
+            font-style: italic;
+            min-height: 50px;
+            max-height: 300px;
+            overflow-y: auto;
+            resize: none;
+            outline: none;
+        }
+
+        .music-lyrics textarea::placeholder {
+            color: #bbb;
+        }
+
+        .abstract-block.dark .music-player {
+            background: #333;
+            border-color: #444;
+        }
+
+        .abstract-block.dark .music-header {
+            background: #2a2a2a;
+            border-bottom-color: #444;
+        }
+
+        .abstract-block.dark .music-icon {
+            color: #999;
+        }
+
+        .abstract-block.dark .music-title,
+        .abstract-block.dark .music-artist {
+            color: #ddd;
+            border-bottom-color: #444;
+        }
+
+        .abstract-block.dark .music-title:focus,
+        .abstract-block.dark .music-artist:focus {
+            border-bottom-color: #666;
+        }
+
+        .abstract-block.dark .progress-container {
+            background-color: #444;
+        }
+
+        .abstract-block.dark .progress-bar {
+            background-color: #aaa;
+        }
+
+        .abstract-block.dark .progress-time {
+            color: #888;
+        }
+
+        .abstract-block.dark .music-lyrics {
+            background: #2a2a2a;
+            border-top-color: #444;
+        }
+
+        .abstract-block.dark .music-lyrics textarea {
+            color: #ccc;
+        }
+
+        .abstract-block.dark .music-lyrics textarea::placeholder {
+            color: #666;
+        }
+
+        /* 各主题音乐播放器配色 */
+        body.theme-梦中身 .abstract-block.dark .music-player {
+            background: #4a4a5a;
+            border-color: #5a5a6a;
+        }
+
+        body.theme-梦中身 .abstract-block.dark .music-header {
+            background: #3a3a4a;
+            border-bottom-color: #5a5a6a;
+        }
+
+        body.theme-梦中身 .abstract-block.dark .music-icon {
+            color: #aaaac0;
+        }
+
+        body.theme-梦中身 .abstract-block.dark .progress-bar {
+            background-color: #aaaac0;
+        }
+
+        body.theme-梦中身 .abstract-block.dark .music-lyrics {
+            background: #3a3a4a;
+            border-top-color: #5a5a6a;
+        }
+
+        body.theme-朱砂痣 .abstract-block.dark .music-player {
+            background: #6a2a25;
+            border-color: #7a3a35;
+        }
+
+        body.theme-朱砂痣 .abstract-block.dark .music-header {
+            background: #5a1a15;
+            border-bottom-color: #7a3a35;
+        }
+
+        body.theme-朱砂痣 .abstract-block.dark .music-icon {
+            color: #d87a70;
+        }
+
+        body.theme-朱砂痣 .abstract-block.dark .progress-bar {
+            background-color: #d87a70;
+        }
+
+        body.theme-朱砂痣 .abstract-block.dark .music-lyrics {
+            background: #5a1a15;
+            border-top-color: #7a3a35;
+        }
+
+        body.theme-如是说 .abstract-block.dark .music-player {
+            background: #5a6a7a;
+            border-color: #6a7a8a;
+        }
+
+        body.theme-如是说 .abstract-block.dark .music-header {
+            background: #4a5a6a;
+            border-bottom-color: #6a7a8a;
+        }
+
+        body.theme-如是说 .abstract-block.dark .music-icon {
+            color: #8aaacc;
+        }
+
+        body.theme-如是说 .abstract-block.dark .progress-bar {
+            background-color: #8aaacc;
+        }
+
+        body.theme-如是说 .abstract-block.dark .music-lyrics {
+            background: #4a5a6a;
+            border-top-color: #6a7a8a;
+        }
+
+        body.theme-长夏中 .abstract-block.dark .music-player {
+            background: #3a4a35;
+            border-color: #4a5a45;
+        }
+
+        body.theme-长夏中 .abstract-block.dark .music-header {
+            background: #2a3a25;
+            border-bottom-color: #4a5a45;
+        }
+
+        body.theme-长夏中 .abstract-block.dark .music-icon {
+            color: #9abb90;
+        }
+
+        body.theme-长夏中 .abstract-block.dark .progress-bar {
+            background-color: #9abb90;
+        }
+
+        body.theme-长夏中 .abstract-block.dark .music-lyrics {
+            background: #2a3a25;
+            border-top-color: #4a5a45;
+        }
+
+        .story-section {
+            margin: 30px 0;
+        }
+
+        .story-title {
+            font-size: 16px;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            border-bottom: 2px solid transparent;
+            display: inline-block;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .story-title:hover,
+        .story-title:focus {
+            border-bottom-color: var(--accent-gray);
+            outline: none;
+        }
+
+        .abstract-block.dark .story-title {
+            color: white;
+        }
+
+        .abstract-block.dark .story-title:hover,
+        .abstract-block.dark .story-title:focus {
+            border-bottom-color: #888;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 60px 0;
+            position: relative;
+            font-size: 14px;
+            color: var(--accent-gray);
+            letter-spacing: 2px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 35%;
+            height: 1px;
+            background: #ddd;
+        }
+
+        .divider::before { left: 0; }
+        .divider::after { right: 0; }
+
+        .speech-bubble {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .speech-bubble textarea {
+            flex: 1;
+            border: 1px solid #ddd;
+            background: white;
+            padding: 6px 12px;
+            min-height: 28px;
+            max-height: 300px;
+            overflow-y: auto;
+            resize: none;
+            outline: none;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-dark);
+            border-radius: 2px;
+        }
+
+        .speech-bubble textarea:focus {
+            border-color: #999;
+        }
+
+        .speech-icon {
+            width: 18px;
+            height: 18px;
+            color: #999;
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+
+        .speech-bubble:hover .speech-icon {
+            color: #666;
+        }
+
+        .abstract-block.dark .speech-bubble textarea {
+            background: #3a3a3a;
+            border-color: #555;
+            color: #ddd;
+        }
+
+        .abstract-block.dark .speech-bubble textarea:focus {
+            border-color: #777;
+        }
+
+        .abstract-block.dark .speech-icon {
+            color: #888;
+        }
+
+        .abstract-block.dark .speech-bubble:hover .speech-icon {
+            color: #aaa;
+        }
+
+        .speech-bubble.left {
+            flex-direction: row;
+        }
+
+        .speech-bubble.right {
+            flex-direction: row-reverse;
+        }
+
+        .generated-url {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 10px;
+            color: var(--accent-gray);
+            opacity: 0.5;
+            font-family: sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-size: 14px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        .print-text-replacement {
+            font-family: inherit;
+            color: inherit;
+            line-height: inherit;
+            border-bottom: 1px solid #ccc;
+            min-height: 1.5em;
+        }
+
+        .copyright-watermark {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            font-family: "JinzisheTongyuan", serif;
+            font-size: 12px;
+            color: #999;
+            z-index: 0;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .watermark-text {
+            opacity: 0.6;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+        }
+
+        .github-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            opacity: 0.4;
+            transition: all 0.3s ease;
+            pointer-events: auto;
+            text-decoration: none;
+        }
+
+        .github-link svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .github-link:hover {
+            opacity: 1;
+            color: #333;
+            transform: scale(1.1) rotate(360deg);
+        }
+
+        @media (max-width: 768px) {
+            #paper-container {
+                padding: 30px 20px;
+            }
+
+            .character-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <div class="copyright-watermark">
+        <a href="https://github.com/Jingshiro/story-of-us" target="_blank" class="github-link" title="项目源码">
+            <svg viewBox="0 0 16 16" width="24" height="24" fill="currentColor">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+            </svg>
+        </a>
+        <div class="watermark-text">
+            Designed by 镜 & Claude & Gemini
+        </div>
+    </div>
+
+    <div class="menu-toggle" onclick="toggleMenu()">+</div>
+
+    <div class="controls" id="controls-panel">
+        <div class="theme-section">
+            <div class="section-title">主题配色</div>
+            <div class="theme-grid">
+                <button class="btn-theme" data-theme="default" onclick="setTheme('default')">黑白灰</button>
+                <button class="btn-theme" data-theme="theme-梦中身" onclick="setTheme('theme-梦中身')">梦中身</button>
+                <button class="btn-theme" data-theme="theme-朱砂痣" onclick="setTheme('theme-朱砂痣')">朱砂痣</button>
+                <button class="btn-theme" data-theme="theme-如是说" onclick="setTheme('theme-如是说')">如是说</button>
+                <button class="btn-theme" data-theme="theme-长夏中" onclick="setTheme('theme-长夏中')">长夏中</button>
+            </div>
+        </div>
+
+        <button class="btn-primary" onclick="generateImage()">生成长图</button>
+        <div style="font-size: 11px; color: #999; margin-top: 10px; text-align: center;">
+            快捷键: Ctrl+S
+        </div>
+    </div>
+
+    <div id="paper-container">
+        <div class="main-title">The Story Of Us</div>
+        <div class="subtitle">那么请让我为你介绍我家User和Char吧</div>
+
+        <!-- Part 1: 角色信息 -->
+        <div class="abstract-block">
+            <div class="part-label">Part 1 - Characters</div>
+            
+            <div class="character-grid">
+                <!-- User -->
+                <div class="character-card">
+                    <div class="avatar-container" onclick="document.getElementById('file-user').click()">
+                        <img id="img-user" class="avatar-img">
+                        <div class="avatar-placeholder" id="ph-user">点击上传<br>User头像</div>
+                        <input type="file" id="file-user" accept="image/*" onchange="handleImageUpload(this, 'user')" style="display:none">
+                    </div>
+                    <input type="text" class="input-line char-name" placeholder="User的名字">
+                    <input type="text" class="input-line" placeholder="一句话介绍" style="font-size: 13px; margin-top: 10px;">
+                </div>
+
+                <!-- Char -->
+                <div class="character-card">
+                    <div class="avatar-container" onclick="document.getElementById('file-char').click()">
+                        <img id="img-char" class="avatar-img">
+                        <div class="avatar-placeholder" id="ph-char">点击上传<br>Char头像</div>
+                        <input type="file" id="file-char" accept="image/*" onchange="handleImageUpload(this, 'char')" style="display:none">
+                    </div>
+                    <input type="text" class="input-line char-name" placeholder="Char的名字">
+                    <input type="text" class="input-line" placeholder="一句话介绍" style="font-size: 13px; margin-top: 10px;">
+                </div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <div style="font-size: 13px; color: var(--accent-gray); margin-bottom: 10px;">User对这段关系的定义：</div>
+                <div class="speech-bubble right">
+                    <svg class="speech-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                    <textarea class="auto-resize" placeholder="若要由我来谈论爱的话……"></textarea>
+                </div>
+
+                <div style="font-size: 13px; color: var(--accent-gray); margin-bottom: 10px; margin-top: 20px;">Char对这段关系的定义：</div>
+                <div class="speech-bubble left">
+                    <svg class="speech-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                    <textarea class="auto-resize" placeholder="在那双眼中映出的又是何等景象？"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="divider">· · ·</div>
+
+        <!-- Part 2: 数据统计 -->
+        <div class="abstract-block dark">
+            <div class="part-label">Part 2 - Journey</div>
+            
+            <div class="info-row">
+                <span class="info-label">相识于</span>
+                <input type="text" class="input-line" placeholder="某年某月某日" style="flex: 1;">
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">目前已经聊了</span>
+                <input type="text" class="input-line" placeholder="数字" style="width: 60px; text-align: center;">
+                <span>个档，一共</span>
+                <input type="text" class="input-line" placeholder="数字" style="width: 60px; text-align: center;">
+                <span>楼了</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">达成HE次数：</span>
+                <input type="text" class="input-line" placeholder="数字" style="width: 60px; text-align: center;">
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">达成BE次数：</span>
+                <input type="text" class="input-line" placeholder="数字" style="width: 60px; text-align: center;">
+            </div>
+
+            <div style="margin-top: 30px;">
+                <div style="font-size: 14px; margin-bottom: 15px; color: #ddd;">如果选一首歌来诠释这些故事，那么会是：</div>
+                
+                <div class="music-player">
+                    <div class="music-header">
+                        <svg class="music-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 18V5l12-2v13"></path>
+                            <circle cx="6" cy="18" r="3"></circle>
+                            <circle cx="18" cy="16" r="3"></circle>
+                        </svg>
+                        <div class="music-info">
+                            <input type="text" class="music-title" placeholder="歌曲名">
+                            <input type="text" class="music-artist" placeholder="歌手">
+                        </div>
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-bar"></div>
+                    </div>
+                    <div class="progress-time">
+                        <span>00:00</span>
+                        <span>--:--</span>
+                    </div>
+                    
+                    <div class="music-lyrics">
+                        <textarea class="auto-resize" placeholder="在这里填入2-3句代表性歌词..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="divider">· · ·</div>
+
+        <!-- Part 3: 故事三章 -->
+        <div class="abstract-block">
+            <div class="part-label">Part 3 - Chapters</div>
+            
+            <div class="story-section">
+                <div class="story-title" contenteditable="true" spellcheck="false">这是我们的初遇</div>
+                <textarea class="textarea-box" placeholder="填入关于此的片段" style="min-height: 100px;"></textarea>
+            </div>
+
+            <div class="story-section">
+                <div class="story-title" contenteditable="true" spellcheck="false">这是我们的分别</div>
+                <textarea class="textarea-box" placeholder="填入关于此的片段" style="min-height: 100px;"></textarea>
+            </div>
+
+            <div class="story-section">
+                <div class="story-title" contenteditable="true" spellcheck="false">这是我们的终局</div>
+                <textarea class="textarea-box" placeholder="填入关于此的片段" style="min-height: 100px;"></textarea>
+            </div>
+        </div>
+
+        <div class="divider">· · ·</div>
+
+        <!-- Part 4: 关于未来 -->
+        <div class="abstract-block dark">
+            <div class="part-label">Part 4 - Future</div>
+            
+            <div style="font-size: 14px; margin-bottom: 20px; color: #ddd; text-align: center;">关于未来，我们想说</div>
+
+            <div style="margin-top: 20px;">
+                <div style="font-size: 13px; color: #aaa; margin-bottom: 10px;">User对未来的看法：</div>
+                <div class="speech-bubble right">
+                    <svg class="speech-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                    <textarea class="auto-resize" placeholder="君の知らない 私だけの秘密"></textarea>
+                </div>
+
+                <div style="font-size: 13px; color: #aaa; margin-bottom: 10px; margin-top: 20px;">Char：</div>
+                <div class="speech-bubble left">
+                    <svg class="speech-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                    <textarea class="auto-resize" placeholder="夜を越えて 远い思い出の君が"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="generated-url">
+            https://jingshiro.github.io/story-of-us
+        </div>
+    </div>
+
+    <script>
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        function toggleMenu() {
+            const controls = document.getElementById('controls-panel');
+            const toggle = document.querySelector('.menu-toggle');
+            controls.classList.toggle('active');
+            toggle.classList.toggle('active');
+        }
+
+        function setTheme(themeName) {
+            if (themeName === 'default') {
+                document.body.className = '';
+            } else {
+                document.body.className = themeName;
+            }
+
+            document.querySelectorAll('.btn-theme').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            const activeBtn = document.querySelector(`.btn-theme[data-theme="${themeName}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+
+            localStorage.setItem('selectedTheme', themeName);
+            
+            const themeNames = {
+                'default': '黑白灰',
+                'theme-梦中身': '梦中身',
+                'theme-朱砂痣': '朱砂痣',
+                'theme-如是说': '如是说',
+                'theme-长夏中': '长夏中'
+            };
+            showToast(`已切换到 ${themeNames[themeName]} 主题`);
+        }
+
+        function autoResizeTextarea(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+
+        function handleImageUpload(input, type) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById(`img-${type}`);
+                    const ph = document.getElementById(`ph-${type}`);
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    ph.style.display = 'none';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function generateImage() {
+            const paper = document.getElementById('paper-container');
+            const btn = document.querySelector('.btn-primary');
+            const originalText = btn.innerText;
+            
+            btn.innerText = '生成中...';
+            btn.disabled = true;
+
+            window.scrollTo(0, 0);
+            showToast('正在生成长图，请稍候...');
+
+            setTimeout(() => {
+                document.body.classList.add('generating-image');
+                const cleanupInputs = replaceInputsWithText();
+
+                html2canvas(paper, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    removeContainer: true,
+                    imageTimeout: 15000,
+                    ignoreElements: (element) => {
+                        return element.classList && (
+                            element.classList.contains('controls') || 
+                            element.classList.contains('menu-toggle') ||
+                            element.classList.contains('speech-icon') ||
+                            element.classList.contains('copyright-watermark')
+                        );
+                    }
+                }).then(canvas => {
+                    try {
+                        const timestamp = new Date().toISOString().slice(0,10).replace(/-/g, '');
+                        canvas.toBlob(function(blob) {
+                            if (!blob) {
+                                throw new Error('图片生成为空');
+                            }
+                            const link = document.createElement('a');
+                            link.download = `我们的故事_${timestamp}.png`;
+                            link.href = URL.createObjectURL(blob);
+                            link.click();
+                            
+                            setTimeout(() => {
+                                URL.revokeObjectURL(link.href);
+                            }, 100);
+                            
+                            showToast('图片已生成！');
+                        }, 'image/png');
+                    } catch (e) {
+                        console.error('导出失败:', e);
+                        showToast('导出失败');
+                    }
+                }).catch(err => {
+                    console.error('生成失败:', err);
+                    showToast('生成失败');
+                }).finally(() => {
+                    cleanupInputs();
+                    document.body.classList.remove('generating-image');
+                    
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                });
+
+            }, 500);
+        }
+
+        function replaceInputsWithText() {
+            const inputs = document.querySelectorAll('input, textarea');
+            const replacements = [];
+
+            inputs.forEach(input => {
+                if (input.style.display === 'none' || input.type === 'file' || input.type === 'hidden') return;
+
+                const style = getComputedStyle(input);
+                const rect = input.getBoundingClientRect();
+                const text = input.value;
+
+                const div = document.createElement('div');
+                div.textContent = text;
+                div.className = 'print-text-replacement';
+
+                div.style.width = rect.width + 'px';
+                div.style.minHeight = rect.height + 'px';
+                div.style.fontFamily = style.fontFamily;
+                div.style.fontSize = style.fontSize;
+                div.style.fontWeight = style.fontWeight;
+                div.style.color = style.color;
+                div.style.textAlign = style.textAlign;
+                div.style.padding = style.padding;
+                div.style.margin = style.margin;
+                div.style.display = 'block';
+                
+                if (input.tagName === 'INPUT') {
+                    div.style.display = 'flex';
+                    div.style.alignItems = 'center';
+                    if (style.textAlign === 'center') div.style.justifyContent = 'center';
+                    else if (style.textAlign === 'right') div.style.justifyContent = 'flex-end';
+                    else div.style.justifyContent = 'flex-start';
+                }
+
+                input.parentNode.insertBefore(div, input);
+                input.style.display = 'none';
+
+                replacements.push({ input, div });
+            });
+
+            const editables = document.querySelectorAll('[contenteditable]');
+            editables.forEach(el => {
+                el.setAttribute('data-was-editable', 'true');
+                el.removeAttribute('contenteditable');
+            });
+
+            return () => {
+                replacements.forEach(({ input, div }) => {
+                    div.remove();
+                    input.style.display = '';
+                });
+                
+                editables.forEach(el => {
+                    if (el.getAttribute('data-was-editable')) {
+                        el.setAttribute('contenteditable', 'true');
+                        el.removeAttribute('data-was-editable');
+                    }
+                });
+            };
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                generateImage();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('selectedTheme');
+            if (savedTheme) {
+                setTheme(savedTheme);
+            } else {
+                setTheme('default');
+            }
+
+            const autoResizeTextareas = document.querySelectorAll('.auto-resize');
+            autoResizeTextareas.forEach(textarea => {
+                textarea.addEventListener('input', function() {
+                    autoResizeTextarea(this);
+                });
+                
+                autoResizeTextarea(textarea);
+            });
+
+            const editables = document.querySelectorAll('[contenteditable]');
+            editables.forEach((el, index) => {
+                let storageKey;
+                if (el.classList.contains('story-title')) {
+                    const parent = el.closest('.story-section');
+                    const sections = Array.from(document.querySelectorAll('.story-section'));
+                    const sectionIndex = sections.indexOf(parent);
+                    storageKey = `story_title_${sectionIndex}`;
+                } else {
+                    storageKey = `editable_${index}`;
+                }
+
+                const savedText = localStorage.getItem(storageKey);
+                if (savedText) {
+                    el.textContent = savedText;
+                }
+                
+                el.addEventListener('input', function() {
+                    localStorage.setItem(storageKey, this.textContent);
+                });
+            });
+        });
+
+        setTimeout(() => {
+            showToast('欢迎使用家U&C记录表');
+        }, 500);
+    </script>
+</body>
+</html>
+
