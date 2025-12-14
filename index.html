@@ -4,9 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>关于我们的故事</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- 预加载字体 CSS，提升加载速度 -->
+    <link rel="preconnect" href="https://fontsapi.zeoseven.com">
+    <link rel="preload" href="https://fontsapi.zeoseven.com/79/main/result.css" as="style">
+    <link rel="stylesheet" href="https://fontsapi.zeoseven.com/79/main/result.css">
+    
+    <!-- 使用多个CDN备份，优先尝试国内CDN -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        // 如果主CDN加载失败，尝试备用CDN
+        if (typeof html2canvas === 'undefined') {
+            document.write('<script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"><\/script>');
+        }
+    </script>
     <style>
-        @import url("https://fontsapi.zeoseven.com/79/main/result.css");
+        /* 优先使用网络字体 Clear Han Serif，确保最佳显示效果 */
 
         :root {
             --bg-light: #f8f8f8;
@@ -64,7 +76,7 @@
         }
 
         body {
-            font-family: "Clear Han Serif";
+            font-family: "Clear Han Serif", "Noto Serif SC", "Source Han Serif SC", "SimSun", serif;
             font-weight: normal;
             background: #e5e5e5;
             padding: 20px;
@@ -72,6 +84,10 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            /* 优化字体渲染 */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
         }
 
         body.generating-image .controls,
@@ -856,17 +872,21 @@
             }
 
             .character-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
             }
 
             .avatar-container {
-                width: 100px;
-                height: 100px;
+                width: 80px;
+                height: 80px;
             }
 
             .char-name {
-                font-size: 18px;
+                font-size: 16px;
+            }
+            
+            .character-card .input-line {
+                font-size: 12px;
             }
 
             .abstract-block {
@@ -1008,6 +1028,36 @@
                 max-width: 80%;
                 font-size: 13px;
                 padding: 10px 20px;
+            }
+        }
+
+        /* 超小屏幕优化（手机竖屏） */
+        @media (max-width: 400px) {
+            .character-grid {
+                gap: 10px;
+            }
+
+            .avatar-container {
+                width: 70px;
+                height: 70px;
+            }
+
+            .char-name {
+                font-size: 14px;
+                margin-bottom: 5px;
+            }
+
+            .character-card .input-line {
+                font-size: 11px;
+                padding: 6px 2px;
+            }
+
+            .abstract-block {
+                padding: 15px 10px;
+            }
+
+            #paper-container {
+                padding: 25px 10px;
             }
         }
     </style>
@@ -1200,7 +1250,7 @@
                     <textarea class="auto-resize" placeholder="君の知らない 私だけの秘密"></textarea>
                 </div>
 
-                <div style="font-size: 13px; color: #aaa; margin-bottom: 10px; margin-top: 20px;">Char：</div>
+                <div style="font-size: 13px; color: #aaa; margin-bottom: 10px; margin-top: 20px;">Char对未来的看法：</div>
                 <div class="speech-bubble left">
                     <svg class="speech-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -1267,42 +1317,113 @@
         }
 
         function handleImageUpload(input, type) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const image = new Image();
-                    image.onload = function() {
-                        // 创建 canvas 来裁切图片为正方形
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        
-                        // 确定裁切尺寸（取较小边作为正方形边长）
-                        const size = Math.min(image.width, image.height);
-                        canvas.width = size;
-                        canvas.height = size;
-                        
-                        // 计算裁切位置（从中心裁切）
-                        const startX = (image.width - size) / 2;
-                        const startY = (image.height - size) / 2;
-                        
-                        // 绘制裁切后的图片
-                        ctx.drawImage(image, startX, startY, size, size, 0, 0, size, size);
-                        
-                        // 将裁切后的图片设置为头像
-                        const croppedImage = canvas.toDataURL('image/png');
-                        const img = document.getElementById(`img-${type}`);
-                        const ph = document.getElementById(`ph-${type}`);
-                        img.src = croppedImage;
-                        img.style.display = 'block';
-                        ph.style.display = 'none';
-                    };
-                    image.src = e.target.result;
-                };
-                reader.readAsDataURL(input.files[0]);
+            if (!input.files || !input.files[0]) {
+                return;
             }
+
+            const file = input.files[0];
+            
+            // 验证文件类型
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+            if (!validTypes.includes(file.type)) {
+                showToast('❌ 请上传图片文件（JPG、PNG、GIF或WebP格式）');
+                input.value = ''; // 清空输入
+                return;
+            }
+            
+            // 验证文件大小（限制为10MB）
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            if (file.size > maxSize) {
+                showToast('❌ 图片文件过大，请选择小于10MB的图片');
+                input.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            
+            // 添加错误处理
+            reader.onerror = function(error) {
+                console.error('读取文件失败:', error);
+                showToast('❌ 读取图片失败，请重试');
+                input.value = '';
+            };
+            
+            reader.onload = function(e) {
+                try {
+                    const image = new Image();
+                    
+                    // 添加图片加载失败处理
+                    image.onerror = function() {
+                        console.error('图片加载失败');
+                        showToast('❌ 图片加载失败，请尝试其他图片');
+                        input.value = '';
+                    };
+                    
+                    image.onload = function() {
+                        try {
+                            // 创建 canvas 来裁切图片为正方形
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            
+                            if (!ctx) {
+                                throw new Error('无法创建canvas上下文');
+                            }
+                            
+                            // 确定裁切尺寸（取较小边作为正方形边长）
+                            const size = Math.min(image.width, image.height);
+                            canvas.width = size;
+                            canvas.height = size;
+                            
+                            // 计算裁切位置（从中心裁切）
+                            const startX = (image.width - size) / 2;
+                            const startY = (image.height - size) / 2;
+                            
+                            // 绘制裁切后的图片
+                            ctx.drawImage(image, startX, startY, size, size, 0, 0, size, size);
+                            
+                            // 将裁切后的图片设置为头像
+                            const croppedImage = canvas.toDataURL('image/png');
+                            
+                            // 保存到 localStorage 以便持久化
+                            try {
+                                localStorage.setItem(`avatar_${type}`, croppedImage);
+                            } catch (storageError) {
+                                console.warn('localStorage存储失败（可能是空间不足）:', storageError);
+                                // 继续显示图片，只是不保存
+                            }
+                            
+                            const img = document.getElementById(`img-${type}`);
+                            const ph = document.getElementById(`ph-${type}`);
+                            img.src = croppedImage;
+                            img.style.display = 'block';
+                            ph.style.display = 'none';
+                            
+                            showToast('✓ 头像上传成功');
+                        } catch (canvasError) {
+                            console.error('图片处理失败:', canvasError);
+                            showToast('❌ 图片处理失败，请尝试其他图片');
+                            input.value = '';
+                        }
+                    };
+                    
+                    image.src = e.target.result;
+                } catch (error) {
+                    console.error('图片上传过程出错:', error);
+                    showToast('❌ 图片上传失败，请重试');
+                    input.value = '';
+                }
+            };
+            
+            reader.readAsDataURL(file);
         }
 
         function generateImage() {
+            // 检查 html2canvas 是否加载成功
+            if (typeof html2canvas === 'undefined') {
+                showToast('图片生成库加载失败，请检查网络连接或刷新页面重试');
+                return;
+            }
+            
             const paper = document.getElementById('paper-container');
             const btn = document.querySelector('.btn-primary');
             const originalText = btn.innerText;
@@ -1438,12 +1559,36 @@
         });
 
         document.addEventListener('DOMContentLoaded', function() {
+            // 检查 html2canvas 库是否成功加载
+            if (typeof html2canvas === 'undefined') {
+                console.error('html2canvas 库加载失败，生成长图功能将不可用');
+                setTimeout(() => {
+                    showToast('⚠️ 部分功能加载失败，生成长图可能不可用');
+                }, 1000);
+            }
+            
             const savedTheme = localStorage.getItem('selectedTheme');
             if (savedTheme) {
                 setTheme(savedTheme);
             } else {
                 setTheme('default');
             }
+
+            // 恢复保存的头像
+            ['user', 'char'].forEach(type => {
+                const savedAvatar = localStorage.getItem(`avatar_${type}`);
+                if (savedAvatar) {
+                    try {
+                        const img = document.getElementById(`img-${type}`);
+                        const ph = document.getElementById(`ph-${type}`);
+                        img.src = savedAvatar;
+                        img.style.display = 'block';
+                        ph.style.display = 'none';
+                    } catch (error) {
+                        console.error(`恢复${type}头像失败:`, error);
+                    }
+                }
+            });
 
             const autoResizeTextareas = document.querySelectorAll('.auto-resize');
             autoResizeTextareas.forEach(textarea => {
