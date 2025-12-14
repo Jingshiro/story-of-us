@@ -805,8 +805,10 @@
             font-family: inherit;
             color: inherit;
             line-height: inherit;
-            border-bottom: 1px solid #ccc;
             min-height: 1.5em;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            box-sizing: border-box;
         }
 
         .copyright-watermark {
@@ -1502,8 +1504,18 @@
                 const text = input.value;
 
                 const div = document.createElement('div');
-                div.textContent = text;
                 div.className = 'print-text-replacement';
+
+                // 区分 textarea 和 input 的文本处理
+                if (input.tagName === 'TEXTAREA') {
+                    // textarea: 保留换行符，使用 innerHTML 和 <br> 标签
+                    div.innerHTML = text.replace(/\n/g, '<br>');
+                    div.style.whiteSpace = 'pre-wrap'; // 保留空格和换行
+                    div.style.wordBreak = 'break-word'; // 允许单词内断行
+                } else {
+                    // input: 单行文本
+                    div.textContent = text;
+                }
 
                 div.style.width = rect.width + 'px';
                 div.style.minHeight = rect.height + 'px';
@@ -1514,11 +1526,13 @@
                 div.style.textAlign = style.textAlign;
                 div.style.padding = style.padding;
                 div.style.margin = style.margin;
+                div.style.lineHeight = style.lineHeight;
                 div.style.display = 'block';
                 
                 if (input.tagName === 'INPUT') {
                     div.style.display = 'flex';
                     div.style.alignItems = 'center';
+                    div.style.borderBottom = '1px solid #ccc';
                     if (style.textAlign === 'center') div.style.justifyContent = 'center';
                     else if (style.textAlign === 'right') div.style.justifyContent = 'flex-end';
                     else div.style.justifyContent = 'flex-start';
